@@ -257,7 +257,7 @@ def convert_tweet(tweet, username, media_sources, users: dict, paths: PathConfig
 def find_files_input_tweets(dir_path_input_data):
     """Identify the tweet archive's file and folder names -
     they change slightly depending on the archive size it seems."""
-    input_tweets_file_templates = ['tweet.js', 'tweets.js', 'tweets-part*.js']
+    input_tweets_file_templates = ['tweet.js', 'tweets.js', 'tweets-part*.js', 'deleted-tweets.js']
     files_paths_input_tweets = []
     for input_tweets_file_template in input_tweets_file_templates:
         files_paths_input_tweets += glob.glob(os.path.join(dir_path_input_data, input_tweets_file_template))
@@ -1108,20 +1108,21 @@ def main():
         shutil.copy('assets/images/favicon.ico', paths.file_tweet_icon)
 
     tweets = parse_tweets(username, users, html_template, paths)
-    def recursive(tweet_id, f):
-        if(tweets[tweet_id][1] is not None):
-            recursive(tweets[tweet_id][1], f)
-        print(tweets[tweet_id][0])
-        f.write(tweets[tweet_id][0] + "\n")
 
     while True:
-        last_tweet_status_id = input("마지막 트윗 주소를 입력. 빈칸 엔터시 종료:").split('/')[-1]
-        print("start saving" + last_tweet_status_id)
-        if last_tweet_status_id == "":
+        tweet_id = input("마지막 트윗 주소를 입력. 빈칸 엔터시 종료:").split('/')[-1]
+        if tweet_id == "":
             break
-        f = open(last_tweet_status_id + ".txt","w")
-        recursive(last_tweet_status_id, f)
-        f.close()
+        output = ""
+        filename = tweet_id + ".txt"
+        print("start extract :" + filename)
+        while tweet_id is not None:
+            print(tweets[tweet_id][0])
+            output = tweets[tweet_id][0] + "\n" + output
+            tweet_id = tweets[tweet_id][1]
+        print("start saving :" + filename)
+        with open(filename, encoding = 'utf-8', mode="w+") as f:
+            f.write(output)
     
 
 if __name__ == "__main__":
