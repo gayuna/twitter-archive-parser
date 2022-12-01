@@ -1117,6 +1117,9 @@ def main():
         filename = tweet_id + ".txt"
         print("start extract :" + filename)
         while tweet_id is not None:
+            if(tweet_id not in tweets):
+                print("!!!!!삭제된 트윗이 존재합니다. 삭제된 트윗 바로 위부터 다시 백업해주세요.!!!!!")
+                break
             print(tweets[tweet_id][0])
             output = tweets[tweet_id][0] + "\n" + output
             tweet_id = tweets[tweet_id][1]
